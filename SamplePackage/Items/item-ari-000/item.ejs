@@ -1,0 +1,57 @@
+﻿<%#ejs
+name: item-ari-000
+title: Trace Sample
+description: |
+  This is a sample item that displays the input values (such as accessibility) and collects a simple response.
+  It's not intended to look at all like a real assessment item. It's just here to to test the rendering engine.
+%>
+<div>
+    <h2 style="margin:0;">Trace Sample</h2>
+    <div style="border: 1px solid black; padding: 12px;">
+        <div>Sample Item Response:</div>
+        Pick a number: <input type="text" id="inNum" />
+        Pick a color: <input type="text" id="inColor" />
+    </div>
+    <p>Introductory text.</p>
+    <h3>Server-Side Response Property ari_s.response</h3>
+    <pre><%= JSON.stringify(ari_s.response, null, 2) %></pre>
+    <h3>Browser-Side Response Property ari_b.response</h3>
+    <pre id="responseTest">Stuff</pre>
+    <h3>Server-Side Accessibility Property ari_s.a11y</h3>
+    <pre><%= JSON.stringify(ari_s.a11y, null, 2) %></pre>
+    <h3>Browser-Side Accessibility Property ari_b.a11y</h3>
+    <pre id="a11yTest">Loading...</pre>
+    <h3>Exercise ari_s.toLocalPath</h3>
+    <div>
+        /common-res/image.png = <%= ari_s.toLocalPath("/common-res/image.png") %><br/>
+        res/something.js = <%= ari_s.toLocalPath("res/something.js") %><br/>
+        ../otheritem/stealimage.png = <%= ari_s.toLocalPath("../otheritem/stealimage.png") %><br/>
+    </div>
+    <h3>Exercise ari_b.toLocalPath</h3>
+    <div>
+        /common-res/image.png = <span id="tlp1">1</span><br/>
+        res/something.js = <span id="tlp2">2</span><br/>
+        ../otheritem/stealimage.png = <span id="tlp3">3</span><br/>
+    </div>
+<script type="text/javascript">
+
+window.addEventListener("load", onload);
+
+function onload()
+{
+    if (ari_b.response.hasOwnProperty("num")) document.getElementById("inNum").value = ari_b.response.num;
+    if (ari_b.response.hasOwnProperty("color")) document.getElementById("inColor").value = ari_b.response.color;
+    document.getElementById("responseTest").textContent = JSON.stringify(ari_b.response, null, 2);
+    document.getElementById("a11yTest").textContent = JSON.stringify(ari_b.a11y, null, 2);
+    document.getElementById("tlp1").textContent = ari_b.toLocalPath("/common-res/image.png");
+    document.getElementById("tlp2").textContent = ari_b.toLocalPath("res/something.js");
+    document.getElementById("tlp3").textContent = ari_b.toLocalPath("../otheritem/stealimage.png");
+};
+
+ari_b.doupdate = function()
+{
+    ari_b.response.num = parseInt(document.getElementById("inNum").value);
+    ari_b.response.color = document.getElementById("inColor").value;
+}
+</script>
+</div>

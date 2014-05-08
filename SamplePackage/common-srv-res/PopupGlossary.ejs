@@ -1,0 +1,97 @@
+﻿<%#ejs
+name: Popup Glossary
+runat: server
+description: Supports popup glossary/vocabulary words in multiple languages. Sensitive to accessiblity settings.
+%>
+<% // Note that these should be sensitive to the accessibility color scheme. Presently they are not. %>
+<style>
+span._ppg {
+    color:inherit;
+    text-decoration:inherit;
+    border-bottom:1px dotted blue;
+    border-top:1px dotted blue;
+}
+span._ppg:hover {
+    background-color:yellow;
+}
+div._ppb {
+    display:none;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    position:absolute;
+    width: 250px;
+    padding: 5px;
+}
+div._ppbTerm {
+    border-bottom: 1px solid black;
+    margin-bottom: 5px;
+}
+div._ppbLang {
+    background-color:darkblue;
+    color:white;
+    width: 140px;
+    padding: 1px;
+    margin-top: 2px;
+}
+div._ppbValue {
+    border: 1px solid darkblue;
+    padding: 3px;
+}
+</style>
+<div id="_ppb" class="_ppb">
+    <div style="float:right; cursor:pointer;" onclick="_ppg_close();">&#x24CD;</div>
+    <div id="_ppbTerm" class="_ppbTerm">Term</div>
+    <div id="_ppbBody">This is the body text.</div>
+</div>
+<script>
+_ppg_langDict = { en: "English", es: "Spanish", fr: "French" }; // More languages to add
+function _ppg_show(trans)
+{
+    var _ppb = document.getElementById("_ppb");
+    var _ppbTerm = document.getElementById("_ppbTerm");
+    var _ppbBody = document.getElementById("_ppbBody");
+    _ppbTerm.textContent = trans.term;
+    var body = "";
+    for (var key in trans)
+    {
+        var lang = _ppg_langDict[key];
+        if (lang)
+        {
+            body = body.concat("<div class='_ppbLang'>", lang, " Glossary</div><div class='_ppbValue'>", trans[key], "</div>");
+        }
+    }
+    _ppbBody.innerHTML = body;
+    _ppb.style.display = "block";
+}
+function _ppg_close()
+{
+    _ppb.style.display = "none";
+}
+</script>
+<%
+// Inserts popup glossary inline with text.
+// Example: <p>Here is a <%ppg(sentence, {en:"set of words", es:"frase", fr:"phrase"} that contains popup vocabulary.</p>
+function ppg(text, trans)
+{
+    var found = false;
+    var gls = Object();
+    for (var key in trans)
+    {
+        if (ari_s.a11y.glossary[key] == true)
+        {
+            gls[key] = trans[key];
+            found = true;
+        }
+    }
+    if (found)
+    {
+        gls.term = text;
+        ari_s.write("<span class=\"_ppg\" onclick=\"_ppg_show(" + JSON.stringify(gls).replace(/"/g, "'") + ");\">" + text + "</span>");
+    }
+    else
+    {
+        ari_s.write(text);
+    }
+}
+%>

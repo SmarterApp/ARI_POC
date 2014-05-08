@@ -1,0 +1,8 @@
+﻿<%#ejs
+description: Score item-ari-001
+%>
+<%
+ari_s.score = ari_s.response.num / 100;
+%>
+<div style="font-weight: bold;">Student Response:</div>
+<pre><%= JSON.stringify(ari_s.response,,3) %></pre>

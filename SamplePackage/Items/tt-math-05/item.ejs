@@ -1,0 +1,99 @@
+﻿<%#ejs
+name: tt-math-05
+title: Training Test Math 05 - Nicki's Pencils
+description: |
+   Demonstrates a bar-graph response item type. Utilizes an SVG graphics item animated using JavaScript. This
+   item id duplicate functionality. The original item was not used.
+%>
+<%#include "/common-srv-res/PopupGlossary.ejs" %>
+<div>
+    <table><tr>
+        <td style="vertical-align:top; padding: 5px 40px;">
+            <div style="border-bottom: 1px solid darkblue;">
+                <span style="color:white; background-color:darkblue;">&nbsp;5&nbsp;</span>
+            </div>
+            <p>
+                Nicky has 4 packs of pencils. Each pack contains 15 <%ppg("pencils", {en:"writing tools", es:"lápices", fr:"crayons"})%>. In each pack, 5 pencils are blue and the rest green.
+            </p>
+            <p>
+                <%ppg("Create", {es:"Crea"})%> a bar graph to show how many of each color pencil Nicky has.
+            </p>
+            <p>
+                <%ppg("Click", {es:"Haz clic"})%> the graph to show where the top of the bar should go.
+            </p>       
+        </td>
+        <td>
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="svg1" width="500" height="400" style="border: 1px solid black;" onclick="onsvgclick(event);">
+                <style type="text/css">
+                    .grlbl{font-family:Verdana, Geneva, sans-serif; font-size: 16px; text-anchor:end;}
+                    .grttl{font-family:Verdana, Geneva, sans-serif; font-size: 16px; font-weight:bold; text-anchor:middle;}
+                </style>
+                <line x1="97"  y1="325" x2="400" y2="325" style="stroke: black;" />
+                <line x1="100" y1="75" x2="100" y2="325" style="stroke: black;" />
+                <text x="95" y="<%= 331 %>" class="grlbl">0</text>
+                <% for (var i=1; i<=10; ++i) { %>
+                    <line x1="100" y1="<%= 325-i*25 %>" x2="400" y2="<%= 325-i*25 %>" style="stroke: lightgray;" />
+                    <line x1="97" y1="<%= 325-i*25 %>" x2="103" y2="<%= 325-i*25 %>" style="stroke: black;" />
+                    <text x="95" y="<%= 331-i*25 %>" class="grlbl"><%= i*5 %></text>
+                <% } %>
+                <text x="250" y="50" class="grttl">Nicky's Pencils</text>
+                <text x="50" y="200" class="grttl" transform="rotate(-90, 50, 200)">Pencils</text>
+                <text x="175" y="350" class="grttl">Blue Pencils</text>
+                <text x="325" y="350" class="grttl">Green Pencils</text>
+                <rect id="rcBlue" x="150" y="324" width="50" height="1" style="fill:darkblue;"/>
+                <rect id="rcGreen" x="300" y="324" width="50" height="1" style="fill:darkgreen;"/>
+            </svg>
+        </td>
+    </tr></table>
+    <div id="test"></div>
+<script type="text/javascript">
+
+window.addEventListener("load", onload);
+var svgElement = document.getElementById("svg1");
+svgElement.addEventListener("click", onsvgclick);
+var rcBlue = svgElement.getElementById("rcBlue");
+var rcGreen = svgElement.getElementById("rcGreen");
+
+function updateGraph()
+{
+    if (ari_b.response.blue >= 0 && ari_b.response.blue <= 50)
+    {
+        var h = Math.floor((ari_b.response.blue + 4) / 5) * 25;
+        rcBlue.setAttribute("height", h);
+        rcBlue.setAttribute("y", 325-h);
+    }
+    if (ari_b.response.green >= 0 && ari_b.response.green <= 50) {
+        var h = Math.floor((ari_b.response.green + 4) / 5) * 25;
+        rcGreen.setAttribute("height", h);
+        rcGreen.setAttribute("y", 325 - h);
+    }
+}
+
+function onsvgclick(e)
+{
+    var rc = svgElement.getBoundingClientRect();
+    var x = e.clientX - rc.left;
+    var y = e.clientY - rc.top;
+    var qty = Math.floor((349 - y) / 25) * 5;
+    document.getElementById("test").innerHTML = qty + " " + y;
+    if (qty >= 0 & qty <= 50)
+    {
+        if (x > 100 && x < 250)
+        {
+            ari_b.response.blue = qty;
+            updateGraph();
+        }
+        else if (x > 250 && x < 400)
+        {
+            ari_b.response.green = qty;
+            updateGraph();
+        }
+    }
+}
+
+function onload()
+{
+    updateGraph();
+}
+</script>
+</div>

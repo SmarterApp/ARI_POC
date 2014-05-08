@@ -1,0 +1,13 @@
+﻿<%#ejs
+description: Score item-ari-001
+%>
+<%
+    // 50% of the score is for getting blue correct. The other 50% is for getting green correct.
+    ari_s.score =
+        ((ari_s.response.blue == 20) ? 0.5 : 0) +
+        ((ari_s.response.green == 40) ? 0.5 : 0);
+%>
+
+<div style="font-weight: bold;">Student Response:</div>
+<div><strong>Blue:</strong> <%= ari_s.response.blue %> <%= (ari_s.response.blue == 20) ? "(Correct)" : "(Incorrect; the correct answer is 20.)" %></div>
+<div><strong>Green:</strong> <%= ari_s.response.green %> <%= (ari_s.response.green == 40) ? "(Correct)" : "(Incorrect; the correct answer is 40.)" %></div>
